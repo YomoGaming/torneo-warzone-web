@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; background: transparent; font-family: 'Rajdhani', sans-serif; overflow: hidden; }
+        .mini-bar {
+            display: flex; align-items: center; width: 220px; height: 35px;
+            background: linear-gradient(90deg, #4b0082, #ff8c00);
+            color: white; border-radius: 0 15px 15px 0;
+            font-size: 14px; box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+        .place { background: #000; padding: 0 8px; height: 100%; display: flex; align-items: center; border-right: 2px solid #ff00ff; }
+        .name { flex-grow: 1; padding-left: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+        .pts { background: rgba(0,0,0,0.8); padding: 0 10px; height: 100%; display: flex; align-items: center; font-size: 16px; }
+        .match-point { border: 2px solid #ff00ff; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="mini-bar" id="box">
+        <div class="place" id="p">--</div>
+        <div class="name" id="n">EQUIPO</div>
+        <div class="pts" id="pts">0</div>
+    </div>
+
+    <script>
+        const RENDER_API = 'https://TU-APP-EN-RENDER.onrender.com'; // <--- PEGA TU LINK DE RENDER AQUÍ
+        const params = new URLSearchParams(window.location.search);
+        const team = params.get('team');
+
+        async function update() {
+            if(!team) return;
+            try {
+                const res = await fetch(`${RENDER_API}/team/${team}`);
+                const data = await res.json();
+                document.getElementById('p').innerText = data.place;
+                document.getElementById('n').innerText = data.team;
+                document.getElementById('pts').innerText = data.points;
+                if(data.isMatchPoint) document.getElementById('box').classList.add('match-point');
+            } catch(e) {}
+        }
+        setInterval(update, 5000); // Cada 5 seg para no saturar la API con 9 streams
+        update();
+    </script>
+</body>
+</html>
