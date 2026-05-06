@@ -10,7 +10,7 @@
         
         .grid-9 { 
             display: grid; 
-            grid-template-columns: repeat(3, 1fr); /* Esto crea las 3 columnas */
+            grid-template-columns: repeat(3, 1fr); 
             gap: 15px; 
             max-width: 100vw;
         }
@@ -32,9 +32,7 @@
             pointer-events: none; z-index: 10;
         }
 
-        /* Ajuste para tablets: 2 columnas */
         @media (max-width: 1100px) { .grid-9 { grid-template-columns: repeat(2, 1fr); } }
-        /* Ajuste para celulares: 1 columna */
         @media (max-width: 700px) { .grid-9 { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -44,12 +42,12 @@
     <div class="grid-9">
         <div class="stream-card">
             <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_1&parent=YomoGaming.github.io&muted=true"></iframe>
-            <iframe class="overlay" src="overlay.html?team=EQUIPO_1"></iframe>
+            <iframe class="overlay" src="overlay.html?team=DETTU X MATE X BOYZ"></iframe>
         </div>
 
         <div class="stream-card">
             <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_2&parent=YomoGaming.github.io&muted=true"></iframe>
-            <iframe class="overlay" src="overlay.html?team=EQUIPO_2"></iframe>
+            <iframe class="overlay" src="overlay.html?team=JOTA X KSPER X TEA"></iframe>
         </div>
 
         <div class="stream-card">
