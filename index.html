@@ -3,86 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Under The Scope - 9 POV Hub</title>
+    <title>Under The Scope - Pro Switcher</title>
     <style>
-        body { background: #080808; color: white; font-family: sans-serif; margin: 0; padding: 10px; }
-        h1 { text-align: center; color: #ff8c00; font-size: 1.5rem; text-transform: uppercase; margin-bottom: 10px; }
+        /* Estilos base para que no haya scroll ni espacios blancos */
+        body, html { 
+            background: #000; margin: 0; padding: 0; 
+            width: 100%; height: 100%; overflow: hidden; 
+            font-family: sans-serif;
+        }
         
+        /* Contenedor de la cuadrícula */
         .grid-9 { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
-            gap: 15px; 
-            max-width: 100vw;
+            gap: 5px; 
+            width: 100vw; height: 100vh;
+            box-sizing: border-box;
+            padding: 5px;
         }
 
+        /* Cada cuadro de stream */
         .stream-card { 
-            position: relative; 
-            background: #1a1a1a; 
-            aspect-ratio: 16 / 9; 
-            border: 1px solid #333;
-            border-radius: 8px;
-            overflow: hidden;
+            position: relative; background: #111; 
+            border: 1px solid #333; overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        /* MODO GRANDE: Esto se activa con JS */
+        .full-screen {
+            position: fixed !important;
+            top: 0 !important; left: 0 !important;
+            width: 100vw !important; height: 100vh !important;
+            z-index: 9999 !important;
+            border: none !important;
         }
 
         iframe.video { width: 100%; height: 100%; border: none; }
         
+        /* El overlay morado/naranja */
         iframe.overlay { 
-            position: absolute; top: 8px; left: 8px; 
-            width: 250px; height: 50px; border: none; 
-            pointer-events: none; z-index: 10;
+            position: absolute; top: 10px; left: 10px; 
+            width: 250px; height: 60px; border: none; 
+            pointer-events: none; z-index: 10000;
+            transform: scale(0.8); transform-origin: top left;
         }
 
-        @media (max-width: 1100px) { .grid-9 { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 700px) { .grid-9 { grid-template-columns: 1fr; } }
+        /* Instrucciones flotantes que desaparecen al agrandar */
+        .hint {
+            position: fixed; bottom: 10px; right: 10px;
+            background: rgba(0,0,0,0.8); color: #ff8c00;
+            padding: 5px 10px; font-size: 12px; border-radius: 5px;
+            z-index: 5; pointer-events: none;
+        }
     </style>
 </head>
 <body>
-    <h1>Under The Scope - Multi-POV (9)</h1>
+
+    <div class="hint">Teclas 1-9: Agranda | 0 o ESC: Vuelve</div>
     
-    <div class="grid-9">
-        <div class="stream-card">
+    <div class="grid-9" id="mainGrid">
+        <div class="stream-card" id="card-1">
             <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_1&parent=YomoGaming.github.io&muted=true"></iframe>
-            <iframe class="overlay" src="overlay.html?team=DETTU X MATE X BOYZ"></iframe>
+            <iframe class="overlay" src="overlay.html?team=EQUIPO_1"></iframe>
         </div>
-
-        <div class="stream-card">
+        <div class="stream-card" id="card-2">
             <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_2&parent=YomoGaming.github.io&muted=true"></iframe>
-            <iframe class="overlay" src="overlay.html?team=JOTA X KSPER X TEA"></iframe>
+            <iframe class="overlay" src="overlay.html?team=EQUIPO_2"></iframe>
         </div>
-
-        <div class="stream-card">
+        <div class="stream-card" id="card-3">
             <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_3&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_3"></iframe>
         </div>
-
-        <div class="stream-card">
+        <div class="stream-card" id="card-4">
             <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_4&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_4"></iframe>
         </div>
-
-        <div class="stream-card">
+        <div class="stream-card" id="card-5">
             <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_5&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_5"></iframe>
         </div>
-
-        <div class="stream-card">
+        <div class="stream-card" id="card-6">
             <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_6&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_6"></iframe>
         </div>
-
-        <div class="stream-card">
+        <div class="stream-card" id="card-7">
             <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_7&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_7"></iframe>
         </div>
-
-        <div class="stream-card">
+        <div class="stream-card" id="card-8">
             <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_8&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_8"></iframe>
         </div>
-
-        <div class="stream-card">
+        <div class="stream-card" id="card-9">
             <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_9&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_9"></iframe>
         </div>
-    </div> </body>
+    </div>
+
+    <script>
+        document.addEventListener('keydown', function(e) {
+            // Si presionan 0 o Escape, vuelve a la cuadrícula
+            if (e.key === '0' || e.key === 'Escape') {
+                document.querySelectorAll('.stream-card').forEach(card => {
+                    card.classList.remove('full-screen');
+                });
+                return;
+            }
+
+            // Si presionan del 1 al 9
+            if (e.key >= '1' && e.key <= '9') {
+                // Limpiamos cualquier otro que esté grande
+                document.querySelectorAll('.stream-card').forEach(card => {
+                    card.classList.remove('full-screen');
+                });
+
+                // Agrandamos el seleccionado
+                const selectedCard = document.getElementById('card-' + e.key);
+                if (selectedCard) {
+                    selectedCard.classList.add('full-screen');
+                }
+            }
+        });
+    </script>
+</body>
 </html>
