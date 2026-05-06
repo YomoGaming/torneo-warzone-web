@@ -2,128 +2,169 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Under The Scope - Pro Switcher</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Under The Scope - Pro Switcher v2</title>
     <style>
-        /* Estilos base para que no haya scroll ni espacios blancos */
+        /* Estilos base para resetear la página y evitar scroll */
         body, html { 
             background: #000; margin: 0; padding: 0; 
             width: 100%; height: 100%; overflow: hidden; 
-            font-family: sans-serif;
+            font-family: 'Inter', sans-serif; box-sizing: border-box;
         }
-        
-        /* Contenedor de la cuadrícula */
+
+        /* Contenedor de la cuadrícula 3x3 */
         .grid-9 { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
-            gap: 5px; 
+            gap: 4px; /* Espacio mínimo para maximizar video */
             width: 100vw; height: 100vh;
-            box-sizing: border-box;
-            padding: 5px;
+            padding: 4px; box-sizing: border-box;
         }
 
         /* Cada cuadro de stream */
         .stream-card { 
-            position: relative; background: #111; 
-            border: 1px solid #333; overflow: hidden;
-            transition: transform 0.2s;
+            position: relative; 
+            background: #111; 
+            border: 1px solid #2a2a2a; 
+            overflow: hidden;
+            /* Esta es la clave para que el video no se corte: */
+            display: flex; justify-content: center; align-items: center;
         }
 
-        /* MODO GRANDE: Esto se activa con JS */
-        .full-screen {
-            position: fixed !important;
-            top: 0 !important; left: 0 !important;
+        /* Iframe del video de Twitch: ajustado al 100% del contenedor */
+        .stream-card iframe.twitch-video { 
+            width: 100%; height: 100%; border: none; 
+            position: absolute; top: 0; left: 0;
+        }
+
+        /* ESTADO FULL SCREEN (Activado por JS) */
+        .full-screen-focus {
+            position: fixed !important; top: 0 !important; left: 0 !important;
             width: 100vw !important; height: 100vh !important;
-            z-index: 9999 !important;
-            border: none !important;
+            z-index: 9999 !important; border: none !important;
         }
 
-        iframe.video { width: 100%; height: 100%; border: none; }
-        
-        /* El overlay morado/naranja */
+        /* Tu overlay de puntos (brillante morado) */
         iframe.overlay { 
-            position: absolute; top: 10px; left: 10px; 
-            width: 250px; height: 60px; border: none; 
-            pointer-events: none; z-index: 10000;
-            transform: scale(0.8); transform-origin: top left;
+            position: absolute; top: 8px; left: 8px; 
+            width: 250px; height: 60px; z-index: 10000;
+            pointer-events: none; /* No interfiere con clics en video */
+            transform: scale(0.75); transform-origin: top left; /* Escala para cuadrícula */
         }
 
-        /* Instrucciones flotantes que desaparecen al agrandar */
-        .hint {
-            position: fixed; bottom: 10px; right: 10px;
-            background: rgba(0,0,0,0.8); color: #ff8c00;
-            padding: 5px 10px; font-size: 12px; border-radius: 5px;
-            z-index: 5; pointer-events: none;
+        /* Ajustes de overlay en Full Screen */
+        .full-screen-focus iframe.overlay {
+            transform: scale(1); /* Escala normal en Full Screen */
+            top: 15px; left: 15px;
+        }
+
+        /* Capa invisible para recuperar el control del teclado (Foco) */
+        #focus-layer {
+            position: fixed; top: 0; right: 0; width: 15px; height: 15px;
+            background: transparent; z-index: 10001; cursor: pointer;
         }
     </style>
 </head>
-<body>
+<body tabindex="0"> <div id="focus-layer" title="Haz clic aquí si el teclado deja de funcionar"></div>
 
-    <div class="hint">Teclas 1-9: Agranda | 0 o ESC: Vuelve</div>
-    
     <div class="grid-9" id="mainGrid">
         <div class="stream-card" id="card-1">
-            <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_1&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_1"></iframe>
+            <iframe class="twitch-video" src="https://player.twitch.tv/?channel=CANAL_1&parent=YomoGaming.github.io&muted=true&autoplay=true"></iframe>
         </div>
         <div class="stream-card" id="card-2">
-            <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_2&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_2"></iframe>
+            <iframe class="twitch-video" src="https://player.twitch.tv/?channel=CANAL_2&parent=YomoGaming.github.io&muted=true&autoplay=true"></iframe>
         </div>
         <div class="stream-card" id="card-3">
-            <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_3&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_3"></iframe>
+            <iframe class="twitch-video" src="https://player.twitch.tv/?channel=CANAL_3&parent=YomoGaming.github.io&muted=true&autoplay=true"></iframe>
         </div>
         <div class="stream-card" id="card-4">
-            <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_4&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_4"></iframe>
+            <iframe class="twitch-video" src="https://player.twitch.tv/?channel=CANAL_4&parent=YomoGaming.github.io&muted=true&autoplay=true"></iframe>
         </div>
         <div class="stream-card" id="card-5">
-            <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_5&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_5"></iframe>
+            <iframe class="twitch-video" src="https://player.twitch.tv/?channel=CANAL_5&parent=YomoGaming.github.io&muted=true&autoplay=true"></iframe>
         </div>
         <div class="stream-card" id="card-6">
-            <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_6&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_6"></iframe>
+            <iframe class="twitch-video" src="https://player.twitch.tv/?channel=CANAL_6&parent=YomoGaming.github.io&muted=true&autoplay=true"></iframe>
         </div>
         <div class="stream-card" id="card-7">
-            <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_7&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_7"></iframe>
+            <iframe class="twitch-video" src="https://player.twitch.tv/?channel=CANAL_7&parent=YomoGaming.github.io&muted=true&autoplay=true"></iframe>
         </div>
         <div class="stream-card" id="card-8">
-            <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_8&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_8"></iframe>
+            <iframe class="twitch-video" src="https://player.twitch.tv/?channel=CANAL_8&parent=YomoGaming.github.io&muted=true&autoplay=true"></iframe>
         </div>
         <div class="stream-card" id="card-9">
-            <iframe class="video" src="https://player.twitch.tv/?channel=CANAL_9&parent=YomoGaming.github.io&muted=true"></iframe>
             <iframe class="overlay" src="overlay.html?team=EQUIPO_9"></iframe>
+            <iframe class="twitch-video" src="https://player.twitch.tv/?channel=CANAL_9&parent=YomoGaming.github.io&muted=true&autoplay=true"></iframe>
         </div>
     </div>
 
     <script>
-        document.addEventListener('keydown', function(e) {
-            // Si presionan 0 o Escape, vuelve a la cuadrícula
-            if (e.key === '0' || e.key === 'Escape') {
-                document.querySelectorAll('.stream-card').forEach(card => {
-                    card.classList.remove('full-screen');
-                });
-                return;
-            }
+        const cards = document.querySelectorAll('.stream-card');
 
-            // Si presionan del 1 al 9
-            if (e.key >= '1' && e.key <= '9') {
-                // Limpiamos cualquier otro que esté grande
-                document.querySelectorAll('.stream-card').forEach(card => {
-                    card.classList.remove('full-screen');
-                });
+        // Función Pro de Conmutación de Stream y Audio
+        function activateSwitcher(streamNum) {
+            cards.forEach((card, index) => {
+                const twitchIframe = card.querySelector('iframe.twitch-video');
+                const currentSrc = twitchIframe.src;
 
-                // Agrandamos el seleccionado
-                const selectedCard = document.getElementById('card-' + e.key);
-                if (selectedCard) {
-                    selectedCard.classList.add('full-screen');
+                // Si es el stream seleccionado (ej: el 1 si presionaron '1')
+                if ((index + 1) == streamNum) {
+                    // 1. Poner Full Screen
+                    card.classList.add('full-screen-focus');
+                    // 2. ACTIVAR AUDIO (Unmute)
+                    if (currentSrc.includes("muted=true")) {
+                        twitchIframe.src = currentSrc.replace("muted=true", "muted=false");
+                    }
+                } else {
+                    // Si no es el seleccionado
+                    // 1. Quitar Full Screen
+                    card.classList.remove('full-screen-focus');
+                    // 2. SILENCIAR AUDIO (Mute)
+                    if (currentSrc.includes("muted=false")) {
+                        twitchIframe.src = currentSrc.replace("muted=false", "muted=true");
+                    }
                 }
+            });
+        }
+
+        // Resetear todo a modo cuadrícula y silencio
+        function resetToGrid() {
+            cards.forEach(card => {
+                card.classList.remove('full-screen-focus');
+                const twitchIframe = card.querySelector('iframe.twitch-video');
+                if (twitchIframe.src.includes("muted=false")) {
+                    twitchIframe.src = twitchIframe.src.replace("muted=false", "muted=true");
+                }
+            });
+        }
+
+        // Escuchador de teclado GLOBAL (window) para mayor fiabilidad
+        window.addEventListener('keydown', function(e) {
+            // Teclas 1-9
+            if (e.key >= '1' && e.key <= '9') {
+                activateSwitcher(e.key);
+            }
+            // Tecla 0 o Escape para volver
+            if (e.key === '0' || e.key === 'Escape') {
+                resetToGrid();
             }
         });
+
+        // Truco de programador: Forzar foco en el body al cargar para activar teclado
+        window.onload = function() {
+            document.body.focus();
+            // A veces el navegador bloquea el foco automático, 
+            // un pequeño delay ayuda:
+            setTimeout(() => document.body.focus(), 100);
+        };
     </script>
 </body>
 </html>
